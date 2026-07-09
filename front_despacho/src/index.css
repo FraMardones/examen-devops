@@ -5,3 +5,14 @@
 body {
     background-color: #EEEEEE;
 }
+
+button, .btn-primary {
+    background-color: #ff4757 !important; /* Un rojo coral ultra visible */
+    color: white !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #e84118 !important; /* Un rojo más oscuro al pasar el mouse */
+}
