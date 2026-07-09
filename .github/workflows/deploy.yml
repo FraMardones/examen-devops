@@ -29,7 +29,7 @@ jobs:
 
     - name: 4. Build y Push - Backend Despachos
       env:
-        ECR_REGISTRY: ${| steps.login-ecr.outputs.registry |}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: back-despachos
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
@@ -37,7 +37,7 @@ jobs:
 
     - name: 5. Build y Push - Backend Ventas
       env:
-        ECR_REGISTRY: ${| steps.login-ecr.outputs.registry |}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: back-ventas
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./back-Ventas_SpringBoot/Springboot-API-REST
@@ -45,7 +45,7 @@ jobs:
 
     - name: 6. Build y Push - Frontend React
       env:
-        ECR_REGISTRY: ${| steps.login-ecr.outputs.registry |}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: front-despacho
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./front_despacho
