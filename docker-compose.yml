@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # 1. Capa de Datos: MySQL Local
+  mysql-db:
+    image: mysql:8.0
+    container_name: local-mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "admin123"
+      MYSQL_DATABASE: "tienda_perritos"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - red-innovatech
+
+  # 2. Capa de Negocio: Backend Despachos
+  back-despachos:
+    build:
+      context: ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+      dockerfile: Dockerfile
+    container_name: local-back-despachos
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/tienda_perritos?allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=admin123
+    depends_on:
+      - mysql-db
+    networks:
+      red-innovatech:
+        aliases:
+          - back-despacho-svc   # ⬅️ ¡ESTO SANA EL ERROR! Nginx ahora encontrará el host
+          - back-despachos-svc  # Por si acaso lo busca en plural
+
+  # 3. Capa de Negocio: Backend Ventas
+  back-ventas:
+    build:
+      context: ./back-Ventas_SpringBoot/Springboot-API-REST
+      dockerfile: Dockerfile
+    container_name: local-back-ventas
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/tienda_perritos?allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=admin123
+    depends_on:
+      - mysql-db
+    networks:
+      red-innovatech:
+        aliases:
+          - back-ventas-svc     # ⬅️ Lo dejamos listo por si Nginx también lo busca
+
+  # 4. Capa de Presentación: Frontend React
+  front-despacho:
+    build:
+      context: ./front_despacho
+      dockerfile: Dockerfile
+    container_name: local-front-despacho
+    ports:
+      - "80:80"
+    depends_on:
+      - back-despachos
+      - back-ventas
+    networks:
+      - red-innovatech
+
+volumes:
+  mysql_data:
+
+networks:
+  red-innovatech:
+    driver: bridge
